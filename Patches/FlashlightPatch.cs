@@ -13,31 +13,41 @@ namespace MagicFlashlight.Patches
     public class FlashlightPatch
     {
 		[HarmonyPatch("SwitchFlashlight")]
-        [HarmonyPostfix]
-		static void SwitchFlashlightPatch(FlashlightItem __instance)
+        [HarmonyPrefix]
+		static bool SwitchFlashlightPatch(FlashlightItem __instance)
 		{
-			if (__instance.flashlightTypeID == 1 && __instance.isBeingUsed && __instance.insertedBattery.charge > 0)
+			if (__instance.flashlightTypeID == 1 &&
+				__instance.isBeingUsed &&
+				__instance.insertedBattery.charge > 0)
 			{
-                PlayerControllerB player = __instance.playerHeldBy;
+				PlayerControllerB player = __instance.playerHeldBy;
 
-                System.Random seed = new System.Random();
-                Vector3 newposition3 = RoundManager.Instance.insideAINodes[seed.Next(0, RoundManager.Instance.insideAINodes.Length)].transform.position;
-                newposition3 = RoundManager.Instance.GetRandomNavMeshPositionInBoxPredictable(newposition3, 10f, RoundManager.Instance.navHit, seed);
+				if (player.isInsideFactory) // Prevent usage in space and weather and clock in factory
+				{
+					System.Random seed = new System.Random();
+					Vector3 newposition3 = RoundManager.Instance.insideAINodes[seed.Next(0, RoundManager.Instance.insideAINodes.Length)].transform.position;
+					newposition3 = RoundManager.Instance.GetRandomNavMeshPositionInBoxPredictable(newposition3, 10f, RoundManager.Instance.navHit, seed);
 
-                Vector3 oldposition3 = GameNetworkManager.Instance.localPlayerController.gameObject.transform.position;
-                Landmine.SpawnExplosion(oldposition3, spawnExplosionEffect: true, 0f, 0f);
+					Vector3 oldposition3 = player.gameObject.transform.position; // Fix explosion occuring for all players
+					Landmine.SpawnExplosion(oldposition3, spawnExplosionEffect: true, 0f, 0f);
 
-                player.TeleportPlayer(newposition3);
-                __instance.insertedBattery.charge = 0;
-                __instance.flashlightAudio.PlayOneShot(__instance.flashlightClips[UnityEngine.Random.Range(0, __instance.flashlightClips.Length)]);
+					player.TeleportPlayer(newposition3);
+					__instance.insertedBattery.charge = 0;
+					__instance.flashlightAudio.PlayOneShot(__instance.flashlightClips[UnityEngine.Random.Range(0, __instance.flashlightClips.Length)]);
 
-                Landmine.SpawnExplosion(newposition3, spawnExplosionEffect: true, 0f, 0f);
+					Landmine.SpawnExplosion(newposition3, spawnExplosionEffect: true, 0f, 0f);
+
+					// player.DestroyItemInSlotAndSync(player.currentItemSlot); // This would make the flashlight one-time-use-only
+
+				}
 
 				// TODO:
 				// Prevent usage in space (check if in space?)
 				// Prevent weather and clock in factory (set player isInFactory to true?)
 				// Fix explosion occurring for all players (oldposition3 might have an incorrect value?)
-            }
+
+			}
+			return false;
         }
     }
 }
