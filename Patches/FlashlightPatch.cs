@@ -14,10 +14,10 @@ namespace MagicFlashlight.Patches
     {
 		[HarmonyPatch("SwitchFlashlight")]
         [HarmonyPrefix]
-		static bool SwitchFlashlightPatch(FlashlightItem __instance)
+		static void SwitchFlashlightPatch(FlashlightItem __instance, ref bool on)
 		{
 			if (__instance.flashlightTypeID == 1 &&
-				__instance.isBeingUsed &&
+				on &&
 				__instance.insertedBattery.charge > 0)
 			{
 				PlayerControllerB player = __instance.playerHeldBy;
@@ -40,6 +40,10 @@ namespace MagicFlashlight.Patches
 					// player.DestroyItemInSlotAndSync(player.currentItemSlot); // This would make the flashlight one-time-use-only
 
 				}
+				else
+				{
+					on = false;
+				}
 
 				// TODO:
 				// Prevent usage in space (check if in space?)
@@ -47,7 +51,6 @@ namespace MagicFlashlight.Patches
 				// Fix explosion occurring for all players (oldposition3 might have an incorrect value?)
 
 			}
-			return false;
         }
     }
 }
