@@ -29,7 +29,6 @@ namespace MagicFlashlight.Patches
 
                 }
             }
-
         }
     }
 }

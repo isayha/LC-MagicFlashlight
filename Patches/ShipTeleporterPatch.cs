@@ -25,26 +25,18 @@ namespace MagicFlashlight.Patches
 
             if (StartOfRound.Instance.allPlayerScripts[playerObj].isPlayerDead)
             {
-                //Original line:
-                //StartCoroutine(teleportBodyOut(playerObj, teleportPos));
                 var TBOparam = new object[] { playerObj, teleportPos };
                 __instance.StartCoroutine((System.Collections.IEnumerator)TeleportBodyOutInfo.Invoke(__instance, TBOparam));
-                // I have no idea if the cast to IEnumerator above will work
-                // God help us all
-
                 return false;
             }
             PlayerControllerB playerControllerB = StartOfRound.Instance.allPlayerScripts[playerObj];
            
             //https://stackoverflow.com/questions/135443/how-do-i-use-reflection-to-invoke-a-private-method
             //https://ludeon.com/forums/index.php?topic=54620.0
-            //Original line:
-            //SetPlayerTeleporterId(playerControllerB, -1);
             var sPTIIparam = new object[] { playerControllerB, -1 };
             setPlayerTeleporterIdInfo.Invoke(__instance, sPTIIparam);
 
             //playerControllerB.DropAllHeldItems();
-            //That'll do 'er
 
             if ((bool)UnityEngine.Object.FindObjectOfType<AudioReverbPresets>())
             {
@@ -64,6 +56,7 @@ namespace MagicFlashlight.Patches
                 Debug.Log("Teleporter shaking camera");
                 HUDManager.Instance.ShakeCamera(ScreenShakeType.Big);
             }
+
             return false;
         }
     }

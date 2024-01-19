@@ -15,7 +15,7 @@ namespace MagicFlashlight
     {
         private const string modGUID = "MagicFlashlight";
         private const string modName = "Lethal Company - Magic Flashlight";
-        private const string modVersion = "1.0.0";
+        private const string modVersion = "1.1.1.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -35,10 +35,10 @@ namespace MagicFlashlight
             mls.LogInfo(modName + " " + modVersion + " has awakened");
 
             harmony.PatchAll(typeof(MagicFlashlightBase));
-            harmony.PatchAll(typeof(ShipTeleporterPatch));
-            harmony.PatchAll(typeof(StartingCreditsPatch));
             harmony.PatchAll(typeof(FlashlightPatch));
+            harmony.PatchAll(typeof(ShipTeleporterPatch));
             harmony.PatchAll(typeof(ItemDropshipPatch));
+            harmony.PatchAll(typeof(StartingCreditsPatch));
 
             mls.LogInfo(modName + " " + modVersion + " patching has completed.");
         }
