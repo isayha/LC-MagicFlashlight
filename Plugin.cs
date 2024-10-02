@@ -15,7 +15,7 @@ namespace MagicFlashlight
     {
         private const string modGUID = "MagicFlashlight";
         private const string modName = "Lethal Company - Magic Flashlight";
-        private const string modVersion = "1.1.1.0";
+        private const string modVersion = "1.2.1.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
