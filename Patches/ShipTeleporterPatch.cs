@@ -37,7 +37,7 @@ namespace MagicFlashlight.Patches
 
             spikeTrapsReactToInverseTeleportInfo.Invoke(__instance, null);
 
-            var sCRparam = new object[] { playerObj };
+            var sCRparam = new object[] { StartOfRound.Instance.allPlayerScripts[playerObj] };
             setCaveReverbInfo.Invoke(__instance, sCRparam);
 
             PlayerControllerB playerControllerB = StartOfRound.Instance.allPlayerScripts[playerObj];
