@@ -20,21 +20,30 @@ namespace MagicFlashlight.Patches
         [HarmonyPrefix]
         static bool dontDropItemsInverseTeleporter(ShipTeleporter __instance, ref int playerObj, ref Vector3 teleportPos)
         {
+            //https://stackoverflow.com/questions/135443/how-do-i-use-reflection-to-invoke-a-private-method
+            //https://ludeon.com/forums/index.php?topic=54620.0
+
             MethodInfo setPlayerTeleporterIdInfo = __instance.GetType().GetMethod("SetPlayerTeleporterId", BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodInfo TeleportBodyOutInfo = __instance.GetType().GetMethod("TeleportBodyOut", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo teleportBodyOutInfo = __instance.GetType().GetMethod("TeleportBodyOut", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo spikeTrapsReactToInverseTeleportInfo = __instance.GetType().GetMethod("SpikeTrapsReactToInverseTeleport", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo setCaveReverbInfo = __instance.GetType().GetMethod("SetCaveReverb", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (StartOfRound.Instance.allPlayerScripts[playerObj].isPlayerDead)
             {
                 var TBOparam = new object[] { playerObj, teleportPos };
-                __instance.StartCoroutine((System.Collections.IEnumerator)TeleportBodyOutInfo.Invoke(__instance, TBOparam));
+                __instance.StartCoroutine((System.Collections.IEnumerator)teleportBodyOutInfo.Invoke(__instance, TBOparam));
                 return false;
             }
+
+            spikeTrapsReactToInverseTeleportInfo.Invoke(__instance, null);
+
+            var sCRparam = new object[] { playerObj };
+            setCaveReverbInfo.Invoke(__instance, sCRparam);
+
             PlayerControllerB playerControllerB = StartOfRound.Instance.allPlayerScripts[playerObj];
            
-            //https://stackoverflow.com/questions/135443/how-do-i-use-reflection-to-invoke-a-private-method
-            //https://ludeon.com/forums/index.php?topic=54620.0
-            var sPTIIparam = new object[] { playerControllerB, -1 };
-            setPlayerTeleporterIdInfo.Invoke(__instance, sPTIIparam);
+            var sPTIparam = new object[] { playerControllerB, -1 };
+            setPlayerTeleporterIdInfo.Invoke(__instance, sPTIparam);
 
             //playerControllerB.DropAllHeldItems();
 

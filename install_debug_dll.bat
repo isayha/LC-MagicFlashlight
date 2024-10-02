@@ -1,0 +1,1 @@
+COPY /Y "C:\Users\Isayha\Documents\Code\MagicFlashlight\bin\Debug\MagicFlashlight.dll" /B "D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins"
